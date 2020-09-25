@@ -12,12 +12,10 @@ public class World
     int select = JOptionPane.CLOSED_OPTION;
     while(select == JOptionPane.CLOSED_OPTION)
     {
-      select = JOptionPane.showOptionDialog(null,"how many players", "numPlayers", 0, 3, null, new Object[] {1,2,3,4}, null);
+      select = JOptionPane.showOptionDialog(null,"How many players?", "Bomberman", 0, 3, null, new Object[] {1,2,3,4}, null);
     }
     
     int nP = 1 + select;
-    
-    
     Display display = new Display(600, 520, nP);
     display.run();
   }
@@ -29,13 +27,23 @@ public class World
   private int height;
   private boolean pressUp1;
   private boolean pressUp2;
+  private boolean pressUp3;
+  private boolean pressUp4;
   private boolean pressDown1;
   private boolean pressDown2;
+  private boolean pressDown3;
+  private boolean pressDown4;
   private boolean pressLeft1;
   private boolean pressLeft2;
+  private boolean pressLeft3;
+  private boolean pressLeft4;
   private boolean pressRight1;
   private boolean pressRight2;
+  private boolean pressRight3;
+  private boolean pressRight4;
   private int numPlayers;
+  private int numAlive;
+//  private Display display;
   
   public World(int w, int h, int nP)
   {
@@ -50,6 +58,10 @@ public class World
     {
       sprites.add(i, new PlayerSprite(i+1));
     }
+    
+    numPlayers = nP;
+    numAlive = nP;
+//    display = d;
   }
   
   public ArrayList<Sprite> getSprites()
@@ -59,20 +71,21 @@ public class World
   
   public void stepAll()
   {
+    if(numAlive == 1 && numPlayers != 1)
+    {
+      for(int i=0; i<numPlayers; i++)
+      {
+        if(sprites.get(i) instanceof PlayerSprite)
+        {
+          end(i+1);
+        }
+      }
+    }
     for(int i=0;i<sprites.size();i++)
     {
       
       Sprite sprite = sprites.get(i);
       sprite.step(this);
-//      if(sprite instanceof Bomb)
-//      {
-//        ((Bomb)sprite).countDown();
-////        System.out.println("count");
-//      }
-//      else if(sprite instanceof Explosion)
-//      {
-//        ((Explosion)sprite).countDown();
-//      }
       if(!sprite.isAlive())
       {
         sprites.remove(i);
@@ -84,6 +97,7 @@ public class World
         else if(sprite instanceof PlayerSprite)
         {
           sprites.add(((PlayerSprite)sprite).getPNum()-1, new DeadSprite((PlayerSprite)sprite));
+          numAlive--;
         }
       }
       
@@ -94,38 +108,62 @@ public class World
       {
         PlayerSprite player1 = (PlayerSprite)sprites.get(0);
         if(pressUp1)
-        {
           player1.up(this);
-        }
         if(pressDown1)
-        {
           player1.down(this);
-        }
         if(pressRight1)
-        {
           player1.right(this);
-        }
         if(pressLeft1)
-        {
           player1.left(this);
+      }
+      
+      if(numPlayers>1)
+      {
+        if(sprites.get(1) instanceof PlayerSprite)
+        {
+          PlayerSprite player2 = (PlayerSprite) sprites.get(1);
+          if(pressUp2)
+            player2.up(this);
+          if(pressDown2)
+            player2.down(this);
+          if(pressLeft2)
+            player2.left(this);
+          if(pressRight2)
+            player2.right(this);
         }
       }
-//      if(sprite.getImage().equals("square.png"))
-//      {
-//        for(int j=0; j<sprites.size() ;j++)
-//        {
-//          if(sprites.get(j).getImage().equals("laser.png"))
-//          {
-//            if(i>=sprites.size())
-//              break;
-//            if(sprite.overlap(sprites.get(j)) && sprite.getImage().equals("square.png"))
-//            {
-//              sprites.remove(i);
-//              sprites.remove(j);
-//            }
-//          }
-//        }
-//      }
+      
+      if(numPlayers>2)
+      {
+        if(sprites.get(2) instanceof PlayerSprite)
+        {
+          PlayerSprite player3 = (PlayerSprite) sprites.get(2);
+          if(pressUp3)
+            player3.up(this);
+          if(pressDown3)
+            player3.down(this);
+          if(pressLeft3)
+            player3.left(this);
+          if(pressRight3)
+            player3.right(this);
+        }
+      }
+      
+      if(numPlayers>3)
+      {
+        if(sprites.get(3) instanceof PlayerSprite)
+        {
+          PlayerSprite player4 = (PlayerSprite) sprites.get(3);
+          if(pressUp4)
+            player4.up(this);
+          if(pressDown4)
+            player4.down(this);
+          if(pressLeft4)
+            player4.left(this);
+          if(pressRight4)
+            player4.right(this);
+        }
+      }
     }
     //if(Math.random()<.5)
       //sprites.add(new Sprite(Math.random()*500,Math.random()*500,10,10,"triangle.png"));
@@ -204,6 +242,58 @@ public class World
 //    }
   }
   
+  public void end(int n)
+  {
+    int select = JOptionPane.CLOSED_OPTION;
+    while(select == JOptionPane.CLOSED_OPTION)
+    {
+      select = JOptionPane.showOptionDialog(null,"Player"+n+" wins!\nPlay Again?", "Game Over", 0, 3, null, new Object[] {"Maybe","Yes"}, null);
+    }
+    if(select == 1)
+    {
+       int select2 = JOptionPane.CLOSED_OPTION;
+       while(select2 == JOptionPane.CLOSED_OPTION)
+       {
+         select2 = JOptionPane.showOptionDialog(null,"How many players?", "Bomberman", 0, 3, null, new Object[] {1,2,3,4}, null);
+         System.out.println(select2);
+         System.out.println(JOptionPane.CLOSED_OPTION);
+       }
+       int nP = 1 + select2;
+       reset(nP);
+    }
+  }
+  
+  public void reset(int nP)
+  {
+    sprites = new ArrayList<Sprite>();
+    walls = new ArrayList<Sprite>();
+    items = new ArrayList<Sprite>();
+    makeMap(walls,600,520);
+    for(int i=0; i < nP ; i++)
+    {
+      sprites.add(i, new PlayerSprite(i+1));
+    }
+    
+    numPlayers = nP;
+    numAlive = nP;
+    pressUp1 = false;
+    pressUp2 = false;
+    pressUp3 = false;
+    pressUp4 = false;
+    pressDown1 = false;
+    pressDown2 = false;
+    pressDown3 = false;
+    pressDown4 = false;
+    pressLeft1 = false;
+    pressLeft2 = false;
+    pressLeft3 = false;
+    pressLeft4 = false;
+    pressRight1 = false;
+    pressRight2 = false;
+    pressRight3 = false;
+    pressRight4 = false;
+  }
+  
   public void sweepTop(int range, double left, double top)
   {
     for(int i=1; i<=(range); i++)
@@ -217,7 +307,7 @@ public class World
       {
         n = new Explosion(left,top-i*40,"boomV0.gif");
       }
-      if(checkWalls(n))
+      if(boomBombs(n) && checkWalls(n))
       {
         sprites.add(sprites.size(),n);
       }
@@ -226,6 +316,25 @@ public class World
         return;
       }
     }
+  }
+  
+  public boolean boomBombs(Sprite n)
+  {
+    for(int i=sprites.size()-1; i>=0; i--)
+    {
+      Sprite sprite = sprites.get(i);
+      if(sprite instanceof Bomb)
+      {
+        if(n.overlap(sprite))
+        {
+          System.out.println("ayy");
+          sprites.remove(i);
+          boom((Bomb)sprite);
+          return false;
+        }
+      }
+    }
+    return true;
   }
   
   public void sweepLeft(int range, double left, double top)
@@ -241,7 +350,7 @@ public class World
       {
         w = new Explosion(left-i*40,top,"boomH0.gif");
       }
-      if(checkWalls(w))
+      if(boomBombs(w) && checkWalls(w))
       {
         sprites.add(sprites.size(),w);
       }
@@ -263,7 +372,7 @@ public class World
       {
         s = new Explosion(left,top+i*40,"boomV0.gif");
       }
-      if(checkWalls(s))
+      if(boomBombs(s) && checkWalls(s))
       {
         sprites.add(sprites.size(),s);
       }
@@ -285,7 +394,7 @@ public class World
       {
         e = new Explosion(left+i*40,top,"boomH0.gif");
       }
-      if(checkWalls(e))
+      if(boomBombs(e) && checkWalls(e))
       {
         sprites.add(sprites.size(),e);
       }
@@ -308,7 +417,7 @@ public class World
         if(wall.getImage().equals("wallSoft.gif"))
         {
           walls.remove(i);
-          if(Math.random()<0.20) /*powerup chance*/
+          if(Math.random()<0.30) /*powerup chance*/
           {
             int t = (int)(Math.random()*6);
             items.add(new ItemSprite(wall.getLeft(),wall.getTop(),t));
@@ -359,32 +468,18 @@ public class World
         pressUp1 = true;
       else if(key == 83)
         pressDown1 = true;
-//      if(key == 65)
-//      {
-//        ((PlayerSprite)player1).left(this);
-//      }
-//      else if(key == 68)
-//      {
-//        ((PlayerSprite)player1).right(this);
-//      }
-//      else if(key == 87)
-//      {
-//        ((PlayerSprite)player1).up(this);
-//      }
-//      else if(key == 83)
-//      {
-//        ((PlayerSprite)player1).down(this);
-//      }
       else if(key == 81)
       {
-        if(checkBombs((PlayerSprite)player1))
+        if(checkBombs(player1))
         {
-          int[] loc = ((PlayerSprite)player1).getlocation();
-          sprites.add(2,new Bomb(loc[0],loc[1],((PlayerSprite)player1)));
+          int[] loc = player1.getLocation();
+          sprites.add(numPlayers,new Bomb(loc[0],loc[1],(player1)));
+          player1.bombOverlap();
         }
       }
     }
-    if(sprites.size()>0 && sprites.get(1) instanceof PlayerSprite)
+    
+    if(numPlayers>1 && sprites.get(1) instanceof PlayerSprite)
     {
       PlayerSprite player2 = (PlayerSprite)sprites.get(1);
       if(key == 37)
@@ -395,39 +490,63 @@ public class World
         pressUp2 = true;
       else if(key == 40)
         pressDown2 = true;
-//      if(key == 37)
-//      {
-//        ((PlayerSprite)player2).left(this);
-//      }
-//      else if(key == 39)
-//      {
-//        ((PlayerSprite)player2).right(this);
-//      }
-//      else if(key == 38)
-//      {
-//        ((PlayerSprite)player2).up(this);
-//      }
-//      else if(key == 40)
-//      {
-//        ((PlayerSprite)player2).down(this);
-//      }
       else if(key == 16)
       {
         if(checkBombs((PlayerSprite)player2))
         {
-          int[] loc = ((PlayerSprite)player2).getlocation();
-          sprites.add(2,new Bomb(loc[0],loc[1],((PlayerSprite)player2)));
+          int[] loc = ((PlayerSprite)player2).getLocation();
+          sprites.add(numPlayers,new Bomb(loc[0],loc[1],(player2)));
+          player2.bombOverlap();
         }
       }
-//      
-//      else
-//      {
-////      ((PlayerSprite)sprites.get(0)).stand();
-//        
-//      }
     }
-//    
-////    System.out.println("keyPressed:  " + key);
+    
+    if(numPlayers>2 && sprites.get(2) instanceof PlayerSprite)
+    {
+      PlayerSprite player3 = (PlayerSprite)sprites.get(2);
+      if(key == 80)
+        pressUp3 = true;
+      else if(key == 76)
+        pressLeft3 = true;
+      else if(key == 59)
+        pressDown3 = true;
+      else if(key == 222)
+        pressRight3 = true;
+      else if(key == 79)
+      {
+        if(checkBombs(player3))
+        {
+          int[] loc = (player3).getLocation();
+          sprites.add(numPlayers,new Bomb(loc[0],loc[1],(player3)));
+          player3.bombOverlap();
+        }
+      }
+    }
+    
+    if(numPlayers>3 && sprites.get(3) instanceof PlayerSprite)
+    {
+      PlayerSprite player4 = (PlayerSprite)sprites.get(3);
+      if(key == 89)
+        pressUp4 = true;
+      else if(key == 71)
+        pressLeft4 = true;
+      else if(key == 72)
+        pressDown4 = true;
+      else if(key == 74)
+        pressRight4 = true;
+      else if(key == 84)
+      {
+        if(checkBombs(player4))
+        {
+          int[] loc = (player4).getLocation();
+          sprites.add(numPlayers,new Bomb(loc[0],loc[1],(player4)));
+          player4.bombOverlap();
+        }
+      }
+    }
+   
+    
+//    System.out.println("keyPressed:  " + key);
     
   }
   
@@ -451,6 +570,7 @@ public class World
   
   public void keyReleased(int key)
   {
+    //P1 controls
     if(key == 65)
       pressLeft1 = false;
     else if(key == 68)
@@ -459,6 +579,8 @@ public class World
       pressUp1 = false;
     else if(key == 83)
       pressDown1 = false;
+    
+    //P2 controls
     else if(key == 37)
       pressLeft2 = false;
     else if(key == 39)
@@ -467,6 +589,26 @@ public class World
       pressUp2 = false;
     else if(key == 40)
       pressDown2 = false;
+    
+    //P3 controls
+    else if(key == 80)
+      pressUp3 = false;
+    else if(key == 76)
+      pressLeft3 = false;
+    else if(key == 59)
+      pressDown3 = false;
+    else if(key == 222)
+      pressRight3 = false;
+    
+    //P4 controls
+    else if(key == 89)
+      pressUp4 = false;
+    else if(key == 71)
+      pressLeft4 = false;
+    else if(key == 72)
+      pressDown4 = false;
+    else if(key == 74)
+      pressRight4 = false;
 //    System.out.println("keyReleased:  " + key);
   }
   
@@ -489,6 +631,7 @@ public class World
   {
     g.setColor(Color.BLACK);
     g.fillRect(0, 0, width, height);
+    
     for (int i = walls.size()-1; i >=0 && i<walls.size() ; i--)
     {
       Sprite sprite = walls.get(i);
@@ -514,6 +657,7 @@ public class World
   
   public void makeMap(ArrayList<Sprite> walls, int w, int h)
   {
+    
     for(int l=40; l<=w-80; l+=80)
     {
       for(int t=40; t<=h-80; t+=80)

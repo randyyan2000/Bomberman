@@ -112,6 +112,11 @@ public class Display extends JComponent implements KeyListener, MouseListener
     }
   }
   
+  public void changeWorld(World w)
+  {
+    world = w;
+  }
+  
   public void keyPressed(KeyEvent e)
   {
     keys.add(e);

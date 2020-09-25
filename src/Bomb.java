@@ -16,7 +16,7 @@ public class Bomb extends Sprite
     count--;
     if(count <=0)
     {
-      explode();
+      kill();
     }
     else
     {
@@ -38,10 +38,5 @@ public class Bomb extends Sprite
   public int getRange()
   {
     return owner.getBombRange();
-  }
-  
-  public void explode()
-  {
-    kill();
   }
 }
